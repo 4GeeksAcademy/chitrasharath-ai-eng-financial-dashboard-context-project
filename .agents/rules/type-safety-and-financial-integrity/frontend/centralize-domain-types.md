@@ -1,12 +1,34 @@
-# Centralize Domain Types
+---
+title: Centralize Domain Types
+description: Define shared frontend domain interfaces in central type modules.
+scope: project
+globs:
+  - frontend/src/lib/**/*types*.ts
+  - frontend/src/**/*.ts
+  - frontend/src/**/*.tsx
+alwaysApply: false
+content: |
+  Reuse canonical domain types across charts, cards, and utilities to avoid drift and duplicate interface definitions.
 
-Scope: frontend
+examples:
+  autofix:
+    - Move all domain type/interface definitions to a central types module (e.g., types.ts) in the frontend/lib directory.
+    - Refactor all usages to import types from this central location, removing duplicate or scattered definitions.
+  bad: |
+    // Duplicate type definitions in different files
+    // chart.ts
+    type Transaction = { id: string; amount: number };
 
-## Enforce
-- Apply this rule in new and modified code.
-- Prefer small, testable, and explicit implementations.
-- Align with existing project conventions unless a migration is approved.
+    // card.ts
+    type Transaction = { id: string; amount: number };
+  good: |
+    // Centralized domain type in types.ts
+    // types.ts
+    export type Transaction = { id: string; amount: number };
 
-## Reviewer Checks
-- The change follows this rule without introducing regressions.
-- Exceptions are documented in the PR with a clear reason.
+    // chart.ts
+    import { Transaction } from './types';
+
+    // card.ts
+    import { Transaction } from './types';
+---

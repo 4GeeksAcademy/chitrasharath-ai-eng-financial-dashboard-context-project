@@ -1,12 +1,20 @@
-# Minimize Inline Style Usage
+---
+title: Minimize Inline Style Usage
+description: Prefer class-driven styling and design tokens over inline style objects.
+scope: project
+globs:
+  - frontend/src/**/*.tsx
+alwaysApply: false
+content: |
+  Keep styles centralized and theme-aware.
+  Use inline styles only when dynamic values cannot be expressed through established style systems.
 
-Scope: frontend
-
-## Enforce
-- Apply this rule in new and modified code.
-- Prefer small, testable, and explicit implementations.
-- Align with existing project conventions unless a migration is approved.
-
-## Reviewer Checks
-- The change follows this rule without introducing regressions.
-- Exceptions are documented in the PR with a clear reason.
+examples:
+  autofix:
+    - Replace inline style objects in JSX with className attributes using design tokens or utility classes (e.g., Tailwind CSS).
+    - Only use inline styles for dynamic values that cannot be represented with existing class systems.
+  bad: |
+    <div style={{ color: 'red', fontWeight: 'bold' }}>Alert</div>
+  good: |
+    <div className="text-error font-bold">Alert</div>
+---

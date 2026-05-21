@@ -1,12 +1,30 @@
-# Use Deterministic Test Data
+---
+title: Use Deterministic Test Data
+description: Tests should use stable, reproducible datasets.
+scope: project
+globs:
+  - frontend/src/**/*.test.ts
+  - backend/tests/**/*.py
+alwaysApply: true
+content: |
+  Avoid randomness and time-dependent values unless explicitly controlled.
+  Seed or freeze variable inputs for repeatable outcomes.
 
-Scope: frontend-and-backend
-
-## Enforce
-- Apply this rule in new and modified code.
-- Prefer small, testable, and explicit implementations.
-- Align with existing project conventions unless a migration is approved.
-
-## Reviewer Checks
-- The change follows this rule without introducing regressions.
-- Exceptions are documented in the PR with a clear reason.
+examples:
+  autofix:
+    - Replace random or time-dependent test data with fixed, seeded, or frozen values to ensure repeatable test outcomes.
+    - Use explicit seeds for randomness or mock time where needed for deterministic results.
+  bad: |
+    # Test uses random data, not repeatable
+    import random
+    def test_random():
+        value = random.randint(1, 100)
+        assert value > 0
+  good: |
+    # Test uses fixed seed for repeatability
+    import random
+    def test_seeded():
+        random.seed(42)
+        value = random.randint(1, 100)
+        assert value == 82
+---

@@ -1,12 +1,26 @@
-# Containerized Dev Environment Standard
+---
+title: Containerized Dev Environment Standard
+description: Maintain a reliable containerized development workflow.
+scope: project
+globs:
+  - docker-compose.yml
+  - frontend/Dockerfile
+  - backend/Dockerfile
+alwaysApply: true
+content: |
+  Keep local setup reproducible through containers and ensure docs and compose definitions remain aligned with active services.
 
-Scope: frontend-and-backend
-
-## Enforce
-- Apply this rule in new and modified code.
-- Prefer small, testable, and explicit implementations.
-- Align with existing project conventions unless a migration is approved.
-
-## Reviewer Checks
-- The change follows this rule without introducing regressions.
-- Exceptions are documented in the PR with a clear reason.
+examples:
+  autofix:
+    - Add or update Dockerfiles and docker-compose.yml to ensure all services can be run in containers.
+    - Update documentation (e.g., README) to instruct developers to use containerized workflows for setup and development.
+  bad: |
+    # Manual setup instructions in README, no Docker support
+    $ pip install -r requirements.txt
+    $ npm install
+    $ python app/main.py
+    $ npm run dev
+  good: |
+    # Docker Compose for unified dev environment
+    $ docker compose up --build
+---
