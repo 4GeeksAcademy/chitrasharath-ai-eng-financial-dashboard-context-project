@@ -54,12 +54,12 @@ function App() {
             </div>
           ) : null}
 
-          <section aria-label="Key performance indicators">
+          <section aria-label="Key performance indicators" role="region">
             <KPIRow metrics={metrics} loading={loading} />
           </section>
 
           <section
-            aria-label="Financial charts"
+            aria-label="Financial charts" role="region"
             className="grid grid-cols-1 gap-4 xl:grid-cols-2"
           >
             <IncomeOutcomeChart data={monthlyData} loading={loading} />

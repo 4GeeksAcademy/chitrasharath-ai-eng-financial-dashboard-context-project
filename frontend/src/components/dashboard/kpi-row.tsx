@@ -26,6 +26,8 @@ export function KPIRow({ metrics, loading }: KPIRowProps) {
         icon={TrendingDown}
         variant="outcome"
         loading={loading}
+        aria-label="Total Outcome Card"
+        role="group"
       />
       <KPICard
         label="Profit"
@@ -34,6 +36,8 @@ export function KPIRow({ metrics, loading }: KPIRowProps) {
         icon={DollarSign}
         variant="profit"
         loading={loading}
+        aria-label="Profit Card"
+        role="group"
       />
       <KPICard
         label="Profit Margin"
@@ -42,6 +46,8 @@ export function KPIRow({ metrics, loading }: KPIRowProps) {
         icon={BarChart2}
         variant="profitPercent"
         loading={loading}
+        aria-label="Profit Margin Card"
+        role="group"
       />
     </div>
   )
