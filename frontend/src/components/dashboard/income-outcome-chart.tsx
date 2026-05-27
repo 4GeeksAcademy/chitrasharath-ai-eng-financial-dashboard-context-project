@@ -46,6 +46,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   )
 }
 
+
 export function IncomeOutcomeChart({ data, loading }: IncomeOutcomeChartProps) {
   if (loading) {
     return (
@@ -60,6 +61,14 @@ export function IncomeOutcomeChart({ data, loading }: IncomeOutcomeChartProps) {
       </Card>
     )
   }
+
+  const incomes = data.map((d) => d.income)
+  const outcomes = data.map((d) => d.outcome)
+  const minIncome = Math.min(...incomes)
+  const maxIncome = Math.max(...incomes)
+  const minOutcome = Math.min(...outcomes)
+  const maxOutcome = Math.max(...outcomes)
+
   return (
     <Card className="border-border/60" role="region" aria-label="Income and Outcome Chart">
       <CardHeader className="pb-4">
@@ -67,13 +76,19 @@ export function IncomeOutcomeChart({ data, loading }: IncomeOutcomeChartProps) {
         <CardDescription>Monthly income and outcome trends</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={data} role="img" aria-label="Line chart showing monthly income and outcome">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginBottom: 8, minHeight: 84 }}>
+          <span style={{ color: '#22c55e', fontWeight: 500, fontSize: 13 }}>{`Income Min: ${formatCurrency(minIncome)}`}</span>
+          <span style={{ color: '#22c55e', fontWeight: 500, fontSize: 13, marginTop: 2 }}>{`Income Max: ${formatCurrency(maxIncome)}`}</span>
+          <span style={{ color: '#ef4444', fontWeight: 500, fontSize: 13, marginTop: 4 }}>{`Outcome Min: ${formatCurrency(minOutcome)}`}</span>
+          <span style={{ color: '#ef4444', fontWeight: 500, fontSize: 13, marginTop: 2 }}>{`Outcome Max: ${formatCurrency(maxOutcome)}`}</span>
+        </div>
+        <ResponsiveContainer width="100%" height={320} minWidth={420} minHeight={320}>
+          <LineChart data={data} role="img" aria-label="Line chart showing monthly income and outcome" margin={{ bottom: 36, left: 16, right: 16, top: 16 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
+            <XAxis dataKey="month" angle={-45} textAnchor="end" interval={0} tick={{ fontSize: 11 }} />
+            <YAxis tickFormatter={formatCurrency} tick={{ fontSize: 11 }} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
+            <Legend verticalAlign="middle" align="right" layout="vertical" wrapperStyle={{ right: 0 }} />
             <Line type="monotone" dataKey="income" stroke="#22c55e" name="Income" />
             <Line type="monotone" dataKey="outcome" stroke="#ef4444" name="Outcome" />
           </LineChart>

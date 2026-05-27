@@ -31,7 +31,9 @@ interface CustomTooltipProps {
 
 function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length) return null
+
   const value = payload[0]?.value ?? 0
+
   return (
     <div className="rounded-lg border border-border bg-card px-4 py-3 shadow-lg text-sm">
       <p className="font-semibold text-foreground mb-1">{label}</p>
@@ -61,6 +63,13 @@ export function ProfitPercentChart({ data, loading }: ProfitPercentChartProps) {
       </Card>
     )
   }
+
+  const profitPercents = data.map((d) => d.profitPercent)
+  const minValue = Math.min(...profitPercents)
+  const maxValue = Math.max(...profitPercents)
+
+  const hasLongXAxisLabels = data.some((d) => String(d.month).length > 4)
+
   return (
     <Card className="border-border/60" role="region" aria-label="Profit Percent Chart">
       <CardHeader className="pb-4">
@@ -68,13 +77,28 @@ export function ProfitPercentChart({ data, loading }: ProfitPercentChartProps) {
         <CardDescription>Monthly profit margin as a percentage</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={data} role="img" aria-label="Line chart showing monthly profit percent">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginBottom: 8, minHeight: 84 }}>
+          <span style={{ color: '#ef4444', fontWeight: 500, fontSize: 13 }}>{`Min: ${minValue.toFixed(1)}%`}</span>
+          <span style={{ color: '#22c55e', fontWeight: 500, fontSize: 13, marginTop: 2 }}>{`Max: ${maxValue.toFixed(1)}%`}</span>
+        </div>
+        <ResponsiveContainer width="100%" height={320} minWidth={420} minHeight={320}>
+          <LineChart
+            data={data}
+            role="img"
+            aria-label="Line chart showing monthly profit percent"
+            margin={{ bottom: hasLongXAxisLabels ? 40 : 16, left: 16, right: 16, top: 16 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
+            <XAxis
+              dataKey="month"
+              angle={hasLongXAxisLabels ? -45 : 0}
+              textAnchor={hasLongXAxisLabels ? 'end' : 'middle'}
+              interval={0}
+              tick={{ fontSize: 11 }}
+            />
+            <YAxis tickFormatter={(value) => `${value}%`} tick={{ fontSize: 11 }} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
+            <Legend verticalAlign="middle" align="right" layout="vertical" wrapperStyle={{ right: 0 }} />
             <Line type="monotone" dataKey="profitPercent" stroke="#3b82f6" name="Profit Percent" />
           </LineChart>
         </ResponsiveContainer>
