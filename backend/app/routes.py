@@ -20,6 +20,16 @@ router = APIRouter()
 
 
 class FinancialMovement(BaseModel):
+    """
+    Represents a financial movement with details about the transaction.
+
+    Attributes:
+        create_date: The date of the transaction.
+        amount: The monetary value of the transaction.
+        operation_type: The type of operation (income or outcome).
+        category: The category of the transaction.
+        business_type: The business type (B2B or B2C).
+    """
     create_date: date
     amount: float
     operation_type: OperationType
@@ -28,6 +38,16 @@ class FinancialMovement(BaseModel):
 
 
 class MetricsFacets(BaseModel):
+    """
+    Represents the facets of financial metrics for filtering and categorization.
+
+    Attributes:
+        operation_types: List of operation types (e.g., income, outcome).
+        business_types: List of business types (e.g., B2B, B2C).
+        categories: List of transaction categories.
+        min_date: The earliest transaction date.
+        max_date: The latest transaction date.
+    """
     operation_types: list[OperationType]
     business_types: list[BusinessType]
     categories: list[Category]
@@ -36,6 +56,15 @@ class MetricsFacets(BaseModel):
 
 
 class MetricsSummaryItem(BaseModel):
+    """
+    Represents a summary item for financial metrics over a specific period.
+
+    Attributes:
+        period: The time period for the summary (e.g., day, week, month).
+        income: Total income for the period.
+        outcome: Total outcome for the period.
+        net: Net value (income - outcome) for the period.
+    """
     period: str
     income: float
     outcome: float
@@ -43,12 +72,29 @@ class MetricsSummaryItem(BaseModel):
 
 
 class TopCategoryItem(BaseModel):
+    """
+    Represents the top category for a specific operation type.
+
+    Attributes:
+        category: The category name.
+        operation_type: The type of operation (income or outcome).
+        total_amount: The total amount for the category.
+    """
     category: Category
     operation_type: OperationType
     total_amount: float
 
 
 class MetricsComparison(BaseModel):
+    """
+    Represents a comparison of financial metrics between two periods.
+
+    Attributes:
+        current_period: The net value for the current period.
+        previous_period: The net value for the previous period.
+        delta_abs: The absolute difference between the two periods.
+        delta_pct: The percentage difference between the two periods.
+    """
     current_period: float
     previous_period: float
     delta_abs: float
@@ -56,6 +102,15 @@ class MetricsComparison(BaseModel):
 
 
 class MetricsAlert(BaseModel):
+    """
+    Represents an alert for significant changes in financial outcomes.
+
+    Attributes:
+        period: The time period of the alert.
+        outcome_total: The total outcome for the period.
+        baseline_average: The baseline average outcome for comparison.
+        increase_ratio: The ratio of increase compared to the baseline.
+    """
     period: str
     outcome_total: float
     baseline_average: float
@@ -63,14 +118,34 @@ class MetricsAlert(BaseModel):
 
 
 def _year_for_month(month: int, today: date) -> int:
+    """
+    Determine the year for a given month based on the current date.
+
+    Args:
+        month: The month to determine the year for.
+        today: The current date.
+
+    Returns:
+        The year corresponding to the given month.
+    """
     if month < today.month:
         return today.year
     return today.year - 1
 
 
 def _build_movement(month: int, income_probability: float, today: date) -> FinancialMovement:
-    operation_type: OperationType = "income" if random.random(
-    ) < income_probability else "outcome"
+    """
+    Build a single financial movement with randomized attributes.
+
+    Args:
+        month: The month of the movement.
+        income_probability: The probability of the movement being income.
+        today: The current date.
+
+    Returns:
+        A FinancialMovement object with randomized attributes.
+    """
+    operation_type: OperationType = "income" if random.random() < income_probability else "outcome"
     movement_day = random.randint(1, 28)
     movement_date = date(_year_for_month(month, today), month, movement_day)
     business_type: BusinessType = "B2B" if random.random() < 0.55 else "B2C"
@@ -92,6 +167,15 @@ def _build_movement(month: int, income_probability: float, today: date) -> Finan
 
 
 def generate_mock_movements(seed: int | None = None) -> list[FinancialMovement]:
+    """
+    Generate a list of mock financial movements for testing or demonstration.
+
+    Args:
+        seed: Optional seed value for random number generation.
+
+    Returns:
+        A list of FinancialMovement objects sorted by date.
+    """
     if seed is not None:
         random.seed(seed)
     today = date.today()
@@ -109,16 +193,29 @@ def filter_movements_by_date(
     start_date: date | None,
     end_date: date | None,
 ) -> list[FinancialMovement]:
+    """
+    Filter financial movements by a date range.
+
+    Args:
+        movements: The list of financial movements to filter.
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+
+    Returns:
+        A list of FinancialMovement objects within the specified date range.
+    """
     if start_date is None and end_date is None:
         return movements
 
     filtered = movements
     if start_date is not None:
         filtered = [
-            movement for movement in filtered if movement.create_date >= start_date]
+            movement for movement in filtered if movement.create_date >= start_date
+        ]
     if end_date is not None:
         filtered = [
-            movement for movement in filtered if movement.create_date <= end_date]
+            movement for movement in filtered if movement.create_date <= end_date
+        ]
     return filtered
 
 
@@ -129,6 +226,19 @@ def filter_movements(
     category: Category | None,
     operation_type: OperationType | None,
 ) -> list[FinancialMovement]:
+    """
+    Filter financial movements by date range, category, and operation type.
+
+    Args:
+        movements: The list of financial movements to filter.
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+        category: The category to filter by.
+        operation_type: The operation type to filter by.
+
+    Returns:
+        A list of FinancialMovement objects matching the filters.
+    """
     filtered = filter_movements_by_date(movements, start_date, end_date)
     if category is not None:
         filtered = [
@@ -144,10 +254,28 @@ def filter_movements(
 
 
 def ensure_chronological_order(movements: list[FinancialMovement]) -> list[FinancialMovement]:
+    """
+    Ensure financial movements are sorted in chronological order.
+
+    Args:
+        movements: The list of financial movements to sort.
+
+    Returns:
+        A list of FinancialMovement objects sorted by date.
+    """
     return sorted(movements, key=lambda item: item.create_date)
 
 
 def build_metrics_facets(movements: list[FinancialMovement]) -> MetricsFacets:
+    """
+    Build metrics facets from a list of financial movements.
+
+    Args:
+        movements: The list of financial movements to analyze.
+
+    Returns:
+        A MetricsFacets object containing facets for filtering and categorization.
+    """
     ordered = ensure_chronological_order(movements)
     return MetricsFacets(
         operation_types=sorted({item.operation_type for item in ordered}),
@@ -162,6 +290,16 @@ def summarize_movements(
     movements: list[FinancialMovement],
     group_by: GroupBy,
 ) -> list[MetricsSummaryItem]:
+    """
+    Summarize financial movements by grouping them into periods.
+
+    Args:
+        movements: The list of financial movements to summarize.
+        group_by: The grouping criterion (e.g., day, week, month).
+
+    Returns:
+        A list of MetricsSummaryItem objects summarizing the movements.
+    """
     summary_map: dict[str, dict[str, float]] = defaultdict(
         lambda: {"income": 0.0, "outcome": 0.0}
     )
@@ -192,6 +330,17 @@ def build_top_categories(
     operation_type: OperationType,
     limit: int,
 ) -> list[TopCategoryItem]:
+    """
+    Build the top categories for a specific operation type.
+
+    Args:
+        movements: The list of financial movements to analyze.
+        operation_type: The operation type to filter by.
+        limit: The number of top categories to return.
+
+    Returns:
+        A list of TopCategoryItem objects representing the top categories.
+    """
     totals: dict[Category, float] = defaultdict(float)
     for movement in movements:
         if movement.operation_type == operation_type:
@@ -209,6 +358,15 @@ def build_top_categories(
 
 
 def calculate_net_value(movements: list[FinancialMovement]) -> float:
+    """
+    Calculate the net value of financial movements.
+
+    Args:
+        movements: The list of financial movements to calculate.
+
+    Returns:
+        The net value (income - outcome) of the movements.
+    """
     income = sum(
         item.amount for item in movements if item.operation_type == "income")
     outcome = sum(
@@ -220,6 +378,16 @@ def detect_outcome_alerts(
     summary: list[MetricsSummaryItem],
     threshold: float,
 ) -> list[MetricsAlert]:
+    """
+    Detect outcome alerts based on significant changes.
+
+    Args:
+        summary: The summary of financial movements.
+        threshold: The threshold for detecting alerts.
+
+    Returns:
+        A list of MetricsAlert objects representing the alerts.
+    """
     alerts: list[MetricsAlert] = []
     historical_outcomes: list[float] = []
     for item in summary:
@@ -252,6 +420,18 @@ def get_metrics(
     category: Category | None = Query(default=None),
     operation_type: OperationType | None = Query(default=None),
 ) -> list[FinancialMovement]:
+    """
+    Get financial movements within a date range.
+
+    Args:
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+        category: The category to filter by.
+        operation_type: The operation type to filter by.
+
+    Returns:
+        A list of FinancialMovement objects within the specified range.
+    """
     movements = generate_mock_movements(seed=42)
     filtered = filter_movements(
         movements, start_date, end_date, category, operation_type
@@ -261,6 +441,12 @@ def get_metrics(
 
 @router.get("/api/metrics/facets", response_model=MetricsFacets)
 def get_metrics_facets() -> MetricsFacets:
+    """
+    Get the facets of financial metrics.
+
+    Returns:
+        A MetricsFacets object containing facets for filtering and categorization.
+    """
     movements = generate_mock_movements(seed=42)
     return build_metrics_facets(movements)
 
@@ -274,6 +460,20 @@ def get_metrics_summary(
     operation_type: OperationType | None = Query(default=None),
     business_type: BusinessType | None = Query(default=None),
 ) -> list[MetricsSummaryItem]:
+    """
+    Get the summary of financial movements.
+
+    Args:
+        group_by: The grouping criterion (e.g., day, week, month).
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+        category: The category to filter by.
+        operation_type: The operation type to filter by.
+        business_type: The business type to filter by.
+
+    Returns:
+        A list of MetricsSummaryItem objects summarizing the movements.
+    """
     movements = generate_mock_movements(seed=42)
     if business_type is not None:
         movements = [
@@ -292,6 +492,19 @@ def get_top_categories(
     end_date: date | None = Query(default=None),
     business_type: BusinessType | None = Query(default=None),
 ) -> list[TopCategoryItem]:
+    """
+    Get the top categories for a specific operation type.
+
+    Args:
+        operation_type: The operation type to filter by.
+        limit: The number of top categories to return.
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+        business_type: The business type to filter by.
+
+    Returns:
+        A list of TopCategoryItem objects representing the top categories.
+    """
     movements = generate_mock_movements(seed=42)
     if business_type is not None:
         movements = [
@@ -308,6 +521,17 @@ def get_metrics_comparison(
     end_date: date = Query(...),
     business_type: BusinessType | None = Query(default=None),
 ) -> MetricsComparison:
+    """
+    Get the comparison of financial metrics between two periods.
+
+    Args:
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+        business_type: The business type to filter by.
+
+    Returns:
+        A MetricsComparison object representing the comparison.
+    """
     movements = generate_mock_movements(seed=42)
     if business_type is not None:
         movements = [
@@ -347,6 +571,19 @@ def get_metrics_alerts(
     end_date: date | None = Query(default=None),
     business_type: BusinessType | None = Query(default=None),
 ) -> list[MetricsAlert]:
+    """
+    Get the alerts for significant changes.
+
+    Args:
+        threshold: The threshold for detecting alerts.
+        group_by: The grouping criterion (e.g., day, week, month).
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+        business_type: The business type to filter by.
+
+    Returns:
+        A list of MetricsAlert objects representing the alerts.
+    """
     movements = generate_mock_movements(seed=42)
     if business_type is not None:
         movements = [
@@ -366,6 +603,18 @@ def get_b2b_metrics(
     category: Category | None = Query(default=None),
     operation_type: OperationType | None = Query(default=None),
 ) -> list[FinancialMovement]:
+    """
+    Get the financial movements for B2B.
+
+    Args:
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+        category: The category to filter by.
+        operation_type: The operation type to filter by.
+
+    Returns:
+        A list of FinancialMovement objects for B2B.
+    """
     movements = [
         movement for movement in generate_mock_movements(seed=42) if movement.business_type == "B2B"
     ]
@@ -382,6 +631,18 @@ def get_b2c_metrics(
     category: Category | None = Query(default=None),
     operation_type: OperationType | None = Query(default=None),
 ) -> list[FinancialMovement]:
+    """
+    Get the financial movements for B2C.
+
+    Args:
+        start_date: The start date of the range (inclusive).
+        end_date: The end date of the range (inclusive).
+        category: The category to filter by.
+        operation_type: The operation type to filter by.
+
+    Returns:
+        A list of FinancialMovement objects for B2C.
+    """
     movements = [
         movement for movement in generate_mock_movements(seed=42) if movement.business_type == "B2C"
     ]
