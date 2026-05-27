@@ -48,11 +48,13 @@ function App() {
         <div className="flex flex-col gap-8">
           <DashboardHeader period="2024 - Full Year" />
 
-          {error ? (
-            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive-foreground">
-              {error}
-            </div>
-          ) : null}
+          <div className="min-h-16" aria-live="polite">
+            {error ? (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive-foreground">
+                {error}
+              </div>
+            ) : null}
+          </div>
 
           <section aria-label="Key performance indicators" role="region">
             <KPIRow metrics={metrics} loading={loading} />

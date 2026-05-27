@@ -147,3 +147,19 @@ Each rule file contains:
 ## Full Compiled Document
 
 For the complete guide with all rules expanded: `AGENTS.md`
+
+## Vite Addendum (For Vite React Projects)
+
+Use these rules when the project is Vite-based (no Next.js app/pages router).
+
+### 9. Vite Metadata and UX Stability
+
+- `vite-page-metadata` - Define a meaningful `<title>` and `<meta name="description">` in `index.html`; for route-level updates use a head manager such as `react-helmet-async`
+- `vite-font-optimization` - Prefer self-hosted `woff2` fonts when possible, preload critical fonts, set `font-display: swap`, and define solid fallback stacks to reduce FOIT/FOUT impact
+- `vite-layout-shift` - Prevent CLS by reserving space for async/dynamic UI, setting explicit image/media dimensions or `aspect-ratio`, and avoiding late insertion of content above existing layout
+
+### Vite Rule Notes
+
+- Metadata baseline belongs in `index.html`; client-side updates should be deterministic per route/view.
+- Font loading should not block initial text rendering.
+- Visual stability is a first-class performance requirement: avoid unexpected movement during hydration and data loading.
