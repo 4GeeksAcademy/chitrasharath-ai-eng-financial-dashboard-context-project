@@ -1,3 +1,13 @@
+## D-010: Adoption of Agent Skills for Code Quality and Consistency
+- Status: Accepted
+- Decision: Adopt a set of agent skills to enforce best practices in accessibility, Python code style, TypeScript expertise, React/Next.js performance, and chart UI/UX consistency.
+- Rationale: Ensures high code quality, maintainability, and accessibility across the codebase. Reduces onboarding time and enforces modern standards for both backend and frontend development.
+- Consequences: All contributors are expected to follow the conventions and best practices defined in the relevant skill files. Skills are documented in `.agents/skills/` and referenced in project memory-bank files for traceability.
+## D-009: Unified TypeScript Chart Style Skill
+- Status: Accepted
+- Decision: Adopt and enforce a documented chart style skill for all TypeScript/React charts (see `.agents/skills/typescript-charts-style/SKILL.md`).
+- Rationale: Ensures visual consistency, accessibility, and maintainability across all dashboard charts. Reduces cognitive load for users and developers by standardizing formatting, legend placement, and summary block layout.
+- Consequences: All new charts must follow these style rules. Existing/legacy charts should be migrated to comply. Skill file is the single source of truth for chart UI/UX conventions.
 # Decisions
 
 ## D-001: Full-Stack Split (React Frontend + FastAPI Backend)

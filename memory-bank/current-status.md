@@ -1,6 +1,19 @@
 # Current Status
 
 ## Implemented Features
+- The following agent skills are available and in use across the project:
+	- accessibility-compliance: WCAG 2.2, ARIA, and inclusive design patterns for accessible UIs.
+	- python-code-style: Python code style, linting, formatting, naming conventions, and documentation standards.
+	- typescript-charts-style: Unified chart style for TypeScript/React charts (currency/percent formatting, legend, min/max, alignment, etc.).
+	- typescript-expert: Advanced TypeScript and JavaScript expertise, type-level programming, performance, and monorepo management.
+	- vercel-react-best-practices: React and Next.js performance optimization guidelines from Vercel Engineering.
+- Dashboard charts now follow a unified TypeScript chart style skill:
+	- Consistent currency and percentage formatting on y-axis and tooltips.
+	- Conditional x-axis label rotation and margin for long labels.
+	- Right-side vertical legend for all charts.
+	- Min/max value summary blocks above each chart, right-aligned, with series color coding.
+	- Top alignment of chart plotting areas across cards for visual consistency.
+	- Skill is documented in `.agents/skills/typescript-charts-style/SKILL.md` and enforced in both profit-percent and income-outcome charts.
 - Dashboard UI renders KPI cards for income, outcome, profit, and profit percent.
 - Dashboard UI renders monthly income/outcome and profit-percent chart views.
 - Backend exposes core metrics endpoint with filter support for date, category, and operation type.
